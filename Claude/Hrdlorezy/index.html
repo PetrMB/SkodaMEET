@@ -3,29 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hrdlořezy — Recenze fotografií</title>
+<title>Charm Reality — Editace fotek Hrdlořezy</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' rx='120' fill='%231E3B3A'/%3E%3Ccircle cx='300' cy='300' r='232' fill='none' stroke='%23D8B981' stroke-width='3'/%3E%3Ctext x='286' y='388' font-family='serif' font-size='300' fill='%23F6F2EA' text-anchor='middle'%3EC%3C/text%3E%3Cpath d='M352,254 Q357.76,284.24 388,290 Q357.76,295.76 352,326 Q346.24,295.76 316,290 Q346.24,284.24 352,254 Z' fill='%23D8B981'/%3E%3C/svg%3E">
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Jura:wght@300;500&display=swap');
+
   :root {
-    --bg: #f5f5f0;
-    --card: #ffffff;
-    --accent: #2d6a4f;
-    --accent-light: #d8f3dc;
-    --text: #1b1b1b;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-    --danger: #dc2626;
-    --radius: 10px;
+    --green: #1E3B3A;
+    --deep-green: #16302F;
+    --gold: #BE9B5E;
+    --gold-light: #D8B981;
+    --ivory: #F6F2EA;
+    --cream: #FBF9F5;
+    --greige: #D8CFC0;
+    --radius: 8px;
     --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,.15);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,.2);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    font-family: 'Jura', sans-serif;
+    font-weight: 300;
+    background: var(--cream);
+    color: var(--green);
     min-height: 100vh;
+    line-height: 1.4;
   }
 
   /* ===== LOGIN ===== */
@@ -35,65 +39,99 @@
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
+    background: var(--green);
   }
 
   .login-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-lg);
-    padding: 48px 40px;
-    max-width: 400px;
+    background: var(--green);
+    padding: 48px 40px 40px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
   }
 
-  .login-card h1 {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
+  .login-logo {
+    width: 220px;
+    height: auto;
+    margin-bottom: 32px;
   }
 
-  .login-card p {
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    font-size: 0.9rem;
+  .login-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold-light);
+    margin: 0 auto 20px;
+    opacity: .5;
+  }
+
+  .login-subtitle {
+    font-family: 'Jura', sans-serif;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+
+  .login-title {
+    font-family: 'Italiana', serif;
+    font-size: 1.6rem;
+    color: var(--ivory);
+    margin-bottom: 32px;
+    font-weight: 400;
   }
 
   .login-card input[type="password"] {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid var(--border);
+    border: 1px solid var(--gold-light);
     border-radius: var(--radius);
-    font-size: 1rem;
+    font-family: 'Jura', sans-serif;
+    font-size: 0.95rem;
+    background: rgba(255,255,255,.06);
+    color: var(--ivory);
     outline: none;
     transition: border-color .2s;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  .login-card input[type="password"]::placeholder {
+    color: var(--greige);
+    opacity: .5;
   }
 
   .login-card input[type="password"]:focus {
-    border-color: var(--accent);
+    border-color: var(--gold);
+    background: rgba(255,255,255,.1);
   }
 
   .login-card .error {
-    color: var(--danger);
-    font-size: 0.85rem;
+    color: #e5a0a0;
+    font-size: 0.8rem;
     margin-top: 8px;
     min-height: 1.2em;
   }
 
   .login-card button {
-    margin-top: 16px;
+    margin-top: 20px;
     width: 100%;
     padding: 12px;
-    background: var(--accent);
-    color: #fff;
+    background: var(--gold-light);
+    color: var(--green);
     border: none;
     border-radius: var(--radius);
-    font-size: 1rem;
-    font-weight: 600;
+    font-family: 'Jura', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: opacity .2s;
+    transition: background .2s;
   }
 
-  .login-card button:hover { opacity: 0.9; }
+  .login-card button:hover { background: var(--gold); }
 
   /* ===== GALLERY ===== */
   #gallery-screen { display: none; }
@@ -102,30 +140,43 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 20px;
+    background: var(--green);
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .top-bar-logo {
+    height: 36px;
+    width: auto;
   }
 
   .top-bar h1 {
-    font-size: 1.15rem;
+    font-family: 'Italiana', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--ivory);
     white-space: nowrap;
   }
 
   .top-bar .counter {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    font-weight: 500;
+    color: var(--greige);
+    font-size: 0.8rem;
+    font-weight: 300;
   }
 
   .top-bar .counter strong {
-    color: var(--accent);
+    color: var(--gold-light);
   }
 
   .top-actions {
@@ -135,51 +186,62 @@
   }
 
   .btn-sm {
-    padding: 7px 14px;
-    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border: 1px solid var(--gold-light);
     border-radius: var(--radius);
-    background: var(--card);
-    font-size: 0.8rem;
+    background: transparent;
+    color: var(--gold-light);
+    font-family: 'Jura', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background .15s;
+    transition: all .15s;
     white-space: nowrap;
   }
 
-  .btn-sm:hover { background: var(--bg); }
+  .btn-sm:hover {
+    background: var(--gold-light);
+    color: var(--green);
+  }
 
   .filter-buttons {
     display: flex;
     gap: 6px;
-    padding: 0 20px;
-    margin-top: 12px;
+    padding: 14px 20px 0;
   }
 
   .filter-btn {
-    padding: 6px 14px;
-    border: 1px solid var(--border);
+    padding: 6px 16px;
+    border: 1px solid var(--greige);
     border-radius: 20px;
-    background: var(--card);
-    font-size: 0.8rem;
+    background: var(--cream);
+    font-family: 'Jura', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--green);
     cursor: pointer;
     transition: all .15s;
   }
 
   .filter-btn.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
+    background: var(--green);
+    color: var(--ivory);
+    border-color: var(--green);
   }
 
   /* Grid */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-    padding: 16px 20px 40px;
+    gap: 14px;
+    padding: 14px 20px 40px;
   }
 
   .card {
-    background: var(--card);
+    background: #fff;
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -198,7 +260,7 @@
     aspect-ratio: 4/3;
     object-fit: cover;
     display: block;
-    background: #e5e5e5;
+    background: var(--greige);
   }
 
   .card-info {
@@ -209,27 +271,30 @@
   }
 
   .card-name {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    font-size: 0.75rem;
+    color: var(--green);
+    opacity: .6;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 70%;
+    letter-spacing: 0.5px;
   }
 
   .badge {
     display: none;
-    background: var(--accent);
+    background: var(--gold);
     color: #fff;
-    font-size: 0.7rem;
-    padding: 3px 8px;
+    font-size: 0.65rem;
+    padding: 3px 10px;
     border-radius: 12px;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
 
   .card.selected .badge { display: inline-block; }
-
-  .card.selected { outline: 3px solid var(--accent); }
+  .card.selected { outline: 2px solid var(--gold); }
 
   /* ===== MODAL ===== */
   .modal-overlay {
@@ -237,7 +302,7 @@
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: rgba(0,0,0,.85);
+    background: rgba(22,48,47,.92);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -257,12 +322,12 @@
     right: 20px;
     background: none;
     border: none;
-    color: #fff;
+    color: var(--ivory);
     font-size: 2rem;
     cursor: pointer;
     z-index: 110;
     line-height: 1;
-    opacity: .7;
+    opacity: .6;
     transition: opacity .15s;
   }
 
@@ -272,9 +337,9 @@
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255,255,255,.15);
+    background: rgba(216,185,129,.12);
     border: none;
-    color: #fff;
+    color: var(--gold-light);
     font-size: 2.5rem;
     padding: 12px 16px;
     cursor: pointer;
@@ -284,7 +349,7 @@
     line-height: 1;
   }
 
-  .modal-nav:hover { background: rgba(255,255,255,.25); }
+  .modal-nav:hover { background: rgba(216,185,129,.25); }
   .modal-nav.prev { left: 12px; }
   .modal-nav.next { right: 12px; }
 
@@ -293,19 +358,23 @@
     border-radius: var(--radius);
     display: block;
     margin-bottom: 20px;
-    background: #333;
+    background: var(--deep-green);
   }
 
   .modal-panel {
-    background: var(--card);
+    background: var(--ivory);
     border-radius: var(--radius);
     padding: 24px;
   }
 
   .modal-panel h2 {
-    font-size: 1.1rem;
+    font-family: 'Jura', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 1px;
     margin-bottom: 16px;
     word-break: break-all;
+    color: var(--green);
   }
 
   .checkbox-row {
@@ -318,14 +387,15 @@
   .checkbox-row input[type="checkbox"] {
     width: 20px;
     height: 20px;
-    accent-color: var(--accent);
+    accent-color: var(--gold);
     cursor: pointer;
   }
 
   .checkbox-row label {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     cursor: pointer;
     user-select: none;
+    color: var(--green);
   }
 
   .edit-area {
@@ -339,38 +409,43 @@
     width: 100%;
     min-height: 100px;
     padding: 12px;
-    border: 2px solid var(--border);
+    border: 1px solid var(--greige);
     border-radius: var(--radius);
-    font-family: inherit;
+    font-family: 'Jura', sans-serif;
     font-size: 0.9rem;
     resize: vertical;
     outline: none;
+    background: #fff;
+    color: var(--green);
     transition: border-color .2s;
   }
 
   .edit-area textarea:focus {
-    border-color: var(--accent);
+    border-color: var(--gold);
   }
 
   .btn-save {
-    padding: 10px 24px;
-    background: var(--accent);
-    color: #fff;
+    padding: 10px 28px;
+    background: var(--green);
+    color: var(--ivory);
     border: none;
     border-radius: var(--radius);
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-family: 'Jura', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: opacity .2s;
+    transition: background .2s;
   }
 
-  .btn-save:hover { opacity: 0.9; }
+  .btn-save:hover { background: var(--deep-green); }
 
   .save-toast {
     display: none;
     margin-left: 12px;
-    color: var(--accent);
-    font-size: 0.85rem;
+    color: var(--gold);
+    font-size: 0.8rem;
     font-weight: 500;
   }
 
@@ -381,7 +456,9 @@
   @media (max-width: 640px) {
     .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
     .top-bar { padding: 10px 14px; }
-    .top-bar h1 { font-size: 1rem; }
+    .top-bar h1 { font-size: 0.95rem; }
+    .login-logo { width: 170px; }
+    .login-title { font-size: 1.3rem; }
     .modal { padding: 10px; }
     .modal-nav { display: none; }
     .modal-panel { padding: 16px; }
@@ -393,20 +470,39 @@
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <h1>Hrdlořezy</h1>
-    <p>Recenze fotografií — zadejte heslo</p>
+    <svg class="login-logo" viewBox="0 0 1100 1320" xmlns="http://www.w3.org/2000/svg">
+      <path d="M315,230 Q550,370 785,230" fill="none" stroke="#D8B981" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="550" cy="350" r="17" fill="none" stroke="#D8B981" stroke-width="4"/>
+      <line x1="550" y1="367" x2="550" y2="392" stroke="#D8B981" stroke-width="2.8"/>
+      <path d="M550,392 Q557.36,430.64 596,438 Q557.36,445.36 550,484 Q542.64,445.36 504,438 Q542.64,430.64 550,392 Z" fill="#D8B981"/>
+      <path d="M602.9,402.58 Q605.26,414.94 617.62,417.3 Q605.26,419.66 602.9,432.02 Q600.54,419.66 588.18,417.3 Q600.54,414.94 602.9,402.58 Z" fill="#D8B981"/>
+      <path d="M398,287 Q400.4,299.6 413,302 Q400.4,304.4 398,317 Q395.6,304.4 383,302 Q395.6,299.6 398,287 Z" fill="#D8B981"/>
+      <path d="M702,287 Q704.4,299.6 717,302 Q704.4,304.4 702,317 Q699.6,304.4 687,302 Q699.6,299.6 702,287 Z" fill="#D8B981"/>
+      <text x="550" y="840" font-family="Italiana, serif" font-size="150" fill="#F6F2EA" text-anchor="middle">CHARM</text>
+      <text x="550" y="938" font-family="Jura, sans-serif" font-size="57" letter-spacing="30" fill="#D8B981" text-anchor="middle">REALITY</text>
+      <text x="550" y="1018" font-family="Jura, sans-serif" font-size="26" letter-spacing="10" fill="#F6F2EA" text-anchor="middle" opacity="0.75">ŠÁRKA  &amp;  EVA</text>
+    </svg>
+    <div class="login-divider"></div>
+    <p class="login-subtitle">Editace fotek</p>
+    <h1 class="login-title">Hrdlořezy</h1>
     <input type="password" id="password-input" placeholder="Heslo" autocomplete="off">
     <div class="error" id="login-error"></div>
-    <button id="login-btn">Vstoupit</button>
+    <button id="login-btn">VSTOUPIT</button>
   </div>
 </div>
 
 <!-- GALLERY -->
 <div id="gallery-screen">
   <div class="top-bar">
-    <div>
-      <h1>Hrdlořezy</h1>
-      <div class="counter" id="counter"></div>
+    <div class="top-bar-left">
+      <svg class="top-bar-logo" viewBox="0 0 1100 500" xmlns="http://www.w3.org/2000/svg">
+        <text x="550" y="280" font-family="Italiana, serif" font-size="150" fill="#F6F2EA" text-anchor="middle">CHARM</text>
+        <text x="550" y="378" font-family="Jura, sans-serif" font-size="57" letter-spacing="30" fill="#D8B981" text-anchor="middle">REALITY</text>
+      </svg>
+      <div>
+        <h1>Editace fotek — Hrdlořezy</h1>
+        <div class="counter" id="counter"></div>
+      </div>
     </div>
     <div class="top-actions">
       <button class="btn-sm" id="btn-export">Exportovat stav</button>
@@ -452,8 +548,8 @@
 (function() {
   'use strict';
 
-  // SHA-256 hash of "charmreality"
-  const PASS_HASH = 'fcb4f5942d1b4979a511a4b872063d915aac72e3761fc2b4b235f806f524ee88';
+  // SHA-256 hash of "upravto"
+  const PASS_HASH = '62b613c262b50774cf6d55b3ec847e8417721d7ab12d8d3bd9ede0bd64f96969';
   const STORAGE_KEY = 'hrdlorezy-review-state';
   const SESSION_KEY = 'hrdlorezy-auth';
 
@@ -599,7 +695,6 @@
 
   document.getElementById('modal-checkbox').addEventListener('change', function() {
     document.getElementById('edit-area').classList.toggle('visible', this.checked);
-    // Auto-save checkbox state
     const name = photos[currentIndex];
     const ps = getPhotoState(name);
     ps.selected = this.checked;
@@ -661,7 +756,6 @@
       try {
         const imported = JSON.parse(ev.target.result);
         const current = getState();
-        // Merge: imported entries overwrite existing
         Object.assign(current, imported);
         saveState(current);
         renderGrid();
