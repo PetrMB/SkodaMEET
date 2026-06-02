@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hrdlořezy — Recenze fotografií</title>
+<style>
+  :root {
+    --bg: #f5f5f0;
+    --card: #ffffff;
+    --accent: #2d6a4f;
+    --accent-light: #d8f3dc;
+    --text: #1b1b1b;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --danger: #dc2626;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== LOGIN ===== */
+  #login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .login-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 48px 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .login-card h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .login-card p {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
+
+  .login-card input[type="password"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .login-card input[type="password"]:focus {
+    border-color: var(--accent);
+  }
+
+  .login-card .error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    min-height: 1.2em;
+  }
+
+  .login-card button {
+    margin-top: 16px;
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+
+  .login-card button:hover { opacity: 0.9; }
+
+  /* ===== GALLERY ===== */
+  #gallery-screen { display: none; }
+
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  .top-bar h1 {
+    font-size: 1.15rem;
+    white-space: nowrap;
+  }
+
+  .top-bar .counter {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .top-bar .counter strong {
+    color: var(--accent);
+  }
+
+  .top-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-sm {
+    padding: 7px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+
+  .btn-sm:hover { background: var(--bg); }
+
+  .filter-buttons {
+    display: flex;
+    gap: 6px;
+    padding: 0 20px;
+    margin-top: 12px;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--card);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all .15s;
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    padding: 16px 20px 40px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    background: #e5e5e5;
+  }
+
+  .card-info {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-name {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 70%;
+  }
+
+  .badge {
+    display: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  .card.selected .badge { display: inline-block; }
+
+  .card.selected { outline: 3px solid var(--accent); }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,.85);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    margin: auto;
+    width: 100%;
+    max-width: 1000px;
+    padding: 20px;
+  }
+
+  .modal-close {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 110;
+    line-height: 1;
+    opacity: .7;
+    transition: opacity .15s;
+  }
+
+  .modal-close:hover { opacity: 1; }
+
+  .modal-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    padding: 12px 16px;
+    cursor: pointer;
+    z-index: 110;
+    border-radius: var(--radius);
+    transition: background .15s;
+    line-height: 1;
+  }
+
+  .modal-nav:hover { background: rgba(255,255,255,.25); }
+  .modal-nav.prev { left: 12px; }
+  .modal-nav.next { right: 12px; }
+
+  .modal-image {
+    width: 100%;
+    border-radius: var(--radius);
+    display: block;
+    margin-bottom: 20px;
+    background: #333;
+  }
+
+  .modal-panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .modal-panel h2 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    word-break: break-all;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .checkbox-row label {
+    font-size: 0.95rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .edit-area {
+    display: none;
+    margin-bottom: 16px;
+  }
+
+  .edit-area.visible { display: block; }
+
+  .edit-area textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .edit-area textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .btn-save {
+    padding: 10px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+
+  .btn-save:hover { opacity: 0.9; }
+
+  .save-toast {
+    display: none;
+    margin-left: 12px;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  /* Hidden file input for import */
+  #import-input { display: none; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+    .top-bar { padding: 10px 14px; }
+    .top-bar h1 { font-size: 1rem; }
+    .modal { padding: 10px; }
+    .modal-nav { display: none; }
+    .modal-panel { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>Hrdlořezy</h1>
+    <p>Recenze fotografií — zadejte heslo</p>
+    <input type="password" id="password-input" placeholder="Heslo" autocomplete="off">
+    <div class="error" id="login-error"></div>
+    <button id="login-btn">Vstoupit</button>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div id="gallery-screen">
+  <div class="top-bar">
+    <div>
+      <h1>Hrdlořezy</h1>
+      <div class="counter" id="counter"></div>
+    </div>
+    <div class="top-actions">
+      <button class="btn-sm" id="btn-export">Exportovat stav</button>
+      <button class="btn-sm" id="btn-import">Importovat stav</button>
+      <input type="file" id="import-input" accept=".json">
+    </div>
+  </div>
+
+  <div class="filter-buttons">
+    <button class="filter-btn active" data-filter="all">Vše</button>
+    <button class="filter-btn" data-filter="selected">Vybrané</button>
+    <button class="filter-btn" data-filter="unselected">Nevybrané</button>
+  </div>
+
+  <div class="grid" id="photo-grid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <button class="modal-close" id="modal-close">&times;</button>
+  <button class="modal-nav prev" id="modal-prev">&#8249;</button>
+  <button class="modal-nav next" id="modal-next">&#8250;</button>
+  <div class="modal">
+    <img class="modal-image" id="modal-image" alt="">
+    <div class="modal-panel">
+      <h2 id="modal-title"></h2>
+      <div class="checkbox-row">
+        <input type="checkbox" id="modal-checkbox">
+        <label for="modal-checkbox">Vybráno k editaci</label>
+      </div>
+      <div class="edit-area" id="edit-area">
+        <textarea id="modal-textarea" placeholder="Pokyny k editaci..."></textarea>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <button class="btn-save" id="btn-save">Uložit</button>
+        <span class="save-toast" id="save-toast">Uloženo!</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // SHA-256 hash of "charmreality"
+  const PASS_HASH = 'fcb4f5942d1b4979a511a4b872063d915aac72e3761fc2b4b235f806f524ee88';
+  const STORAGE_KEY = 'hrdlorezy-review-state';
+  const SESSION_KEY = 'hrdlorezy-auth';
+
+  let photos = [];
+  let currentIndex = -1;
+  let currentFilter = 'all';
+
+  // --- Auth ---
+  async function sha256(text) {
+    const data = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function tryLogin() {
+    const input = document.getElementById('password-input');
+    const hash = await sha256(input.value);
+    if (hash === PASS_HASH) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      showGallery();
+    } else {
+      document.getElementById('login-error').textContent = 'Špatné heslo';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  function showGallery() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('gallery-screen').style.display = 'block';
+    loadPhotos();
+  }
+
+  // --- State ---
+  function getState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function getPhotoState(name) {
+    const state = getState();
+    return state[name] || { selected: false, instructions: '' };
+  }
+
+  function setPhotoState(name, data) {
+    const state = getState();
+    state[name] = data;
+    saveState(state);
+  }
+
+  // --- Counter ---
+  function updateCounter() {
+    const state = getState();
+    const sel = Object.values(state).filter(s => s.selected).length;
+    document.getElementById('counter').innerHTML = '<strong>' + sel + '</strong> z ' + photos.length + ' vybráno';
+  }
+
+  // --- Grid ---
+  async function loadPhotos() {
+    try {
+      const res = await fetch('photos/manifest.json');
+      photos = await res.json();
+    } catch {
+      photos = [];
+    }
+    renderGrid();
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('photo-grid');
+    const state = getState();
+    grid.innerHTML = '';
+
+    const filtered = photos.filter((name, i) => {
+      if (currentFilter === 'all') return true;
+      const ps = state[name];
+      if (currentFilter === 'selected') return ps && ps.selected;
+      return !ps || !ps.selected;
+    });
+
+    filtered.forEach((name) => {
+      const ps = state[name] || {};
+      const card = document.createElement('div');
+      card.className = 'card' + (ps.selected ? ' selected' : '');
+      card.innerHTML =
+        '<img src="photos/thumb/' + name + '.jpg" alt="' + name + '" loading="lazy">' +
+        '<div class="card-info">' +
+          '<span class="card-name">' + name + '</span>' +
+          '<span class="badge">Vybráno</span>' +
+        '</div>';
+      card.addEventListener('click', () => openModal(photos.indexOf(name)));
+      grid.appendChild(card);
+    });
+
+    updateCounter();
+  }
+
+  // --- Filters ---
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelector('.filter-btn.active').classList.remove('active');
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderGrid();
+    });
+  });
+
+  // --- Modal ---
+  function openModal(index) {
+    currentIndex = index;
+    const name = photos[index];
+    const ps = getPhotoState(name);
+
+    document.getElementById('modal-image').src = 'photos/medium/' + name + '.jpg';
+    document.getElementById('modal-title').textContent = name;
+    document.getElementById('modal-checkbox').checked = ps.selected;
+    document.getElementById('modal-textarea').value = ps.instructions || '';
+    document.getElementById('edit-area').classList.toggle('visible', ps.selected);
+    document.getElementById('save-toast').style.display = 'none';
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    renderGrid();
+  }
+
+  function navigate(dir) {
+    let next = currentIndex + dir;
+    if (next < 0) next = photos.length - 1;
+    if (next >= photos.length) next = 0;
+    openModal(next);
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-prev').addEventListener('click', () => navigate(-1));
+  document.getElementById('modal-next').addEventListener('click', () => navigate(1));
+
+  document.getElementById('modal-checkbox').addEventListener('change', function() {
+    document.getElementById('edit-area').classList.toggle('visible', this.checked);
+    // Auto-save checkbox state
+    const name = photos[currentIndex];
+    const ps = getPhotoState(name);
+    ps.selected = this.checked;
+    if (!this.checked) ps.instructions = '';
+    setPhotoState(name, ps);
+    updateCounter();
+  });
+
+  document.getElementById('btn-save').addEventListener('click', function() {
+    const name = photos[currentIndex];
+    const ps = {
+      selected: document.getElementById('modal-checkbox').checked,
+      instructions: document.getElementById('modal-textarea').value
+    };
+    setPhotoState(name, ps);
+    updateCounter();
+
+    const toast = document.getElementById('save-toast');
+    toast.style.display = 'inline';
+    setTimeout(() => toast.style.display = 'none', 2000);
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (!document.getElementById('modal-overlay').classList.contains('open')) return;
+    if (e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+  });
+
+  // Close modal on overlay click
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // --- Export / Import ---
+  document.getElementById('btn-export').addEventListener('click', function() {
+    const state = getState();
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = 'hrdlorezy-review-' + date + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('btn-import').addEventListener('click', function() {
+    document.getElementById('import-input').click();
+  });
+
+  document.getElementById('import-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const imported = JSON.parse(ev.target.result);
+        const current = getState();
+        // Merge: imported entries overwrite existing
+        Object.assign(current, imported);
+        saveState(current);
+        renderGrid();
+        alert('Stav importován (' + Object.keys(imported).length + ' položek)');
+      } catch {
+        alert('Chyba: neplatný JSON soubor');
+      }
+    };
+    reader.readAsText(file);
+    this.value = '';
+  });
+
+  // --- Init ---
+  document.getElementById('login-btn').addEventListener('click', tryLogin);
+  document.getElementById('password-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  // Check session
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    showGallery();
+  } else {
+    document.getElementById('password-input').focus();
+  }
+})();
+</script>
+</body>
+</html>
