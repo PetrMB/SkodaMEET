@@ -492,6 +492,32 @@
 
   // ---------- footer ----------
 
+  $('download-zip').addEventListener('click', async () => {
+    const btn = $('download-zip');
+    const batch = $('batch-name').value.trim() || defaultBatchName();
+    btn.disabled = true;
+    btn.textContent = 'Balím ZIP…';
+    try {
+      const res = await fetch(`/api/zip?batch=${encodeURIComponent(batch)}`);
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        alert(json.error || 'ZIP se nepodařilo vytvořit.');
+        return;
+      }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${batch}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Stáhnout vše (ZIP)';
+    }
+  });
+
   $('open-folder').addEventListener('click', () => {
     fetch('/api/open-folder', {
       method: 'POST',

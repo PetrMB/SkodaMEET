@@ -4,7 +4,7 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { execFile } = require('node:child_process');
+const { execFile, spawn } = require('node:child_process');
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8095;
 const ROOT = __dirname;
@@ -257,6 +257,25 @@ async function handleApi(req, res, url) {
       const status = err.status && err.status >= 400 && err.status < 600 ? err.status : 502;
       sendJSON(res, status, { error: err.message || 'Neznámá chyba' });
     }
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/zip') {
+    const batch = sanitizeName(url.searchParams.get('batch'), '');
+    const cfg = loadConfig();
+    const dir = path.resolve(path.join(cfg.outputDir, batch));
+    if (!batch || !dir.startsWith(path.resolve(cfg.outputDir)) || !fs.existsSync(dir)) {
+      sendJSON(res, 404, { error: 'Složka dávky zatím neexistuje — nejdřív zpracujte fotky.' });
+      return;
+    }
+    res.writeHead(200, {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `attachment; filename="retus.zip"; filename*=UTF-8''${encodeURIComponent(batch)}.zip`,
+    });
+    const child = spawn('zip', ['-r', '-q', '-', '.'], { cwd: dir });
+    child.stdout.pipe(res);
+    child.stderr.resume();
+    child.on('error', () => res.end());
     return;
   }
 
