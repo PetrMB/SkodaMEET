@@ -7,13 +7,6 @@
       "runtimeArgs": ["-e", "const h=require('http'),f=require('fs'),p=require('path');h.createServer((q,r)=>{let u=q.url==='/'?'/index.html':q.url;let fp=p.join('/Users/petrhoneger/Documents/HLAVA2_2/Claude/CozyCup',u);f.readFile(fp,(e,d)=>{if(e){r.writeHead(404);r.end('Not found')}else{let ct='text/html';if(fp.endsWith('.js'))ct='text/javascript';if(fp.endsWith('.css'))ct='text/css';r.writeHead(200,{'Content-Type':ct});r.end(d)}})}).listen(8090)"],
       "port": 8090,
       "autoPort": false
-    },
-    {
-      "name": "hrdlorezy",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["-e", "const h=require('http'),f=require('fs'),p=require('path');h.createServer((q,r)=>{let u=q.url==='/'?'/index.html':q.url;let fp=p.join('/Users/petrhoneger/Documents/HLAVA2_2/Claude/Hrdlorezy',decodeURIComponent(u));f.readFile(fp,(e,d)=>{if(e){r.writeHead(404);r.end('Not found')}else{let ct='text/html';if(fp.endsWith('.js'))ct='text/javascript';if(fp.endsWith('.css'))ct='text/css';if(fp.endsWith('.json'))ct='application/json';if(fp.endsWith('.jpg'))ct='image/jpeg';r.writeHead(200,{'Content-Type':ct});r.end(d)}})}).listen(8091)"],
-      "port": 8091,
-      "autoPort": false
     }
   ]
 }
