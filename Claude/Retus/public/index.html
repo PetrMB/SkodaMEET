@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charm Reality — Retuš fotek</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' rx='120' fill='%231E3B3A'/%3E%3Ccircle cx='300' cy='300' r='232' fill='none' stroke='%23D8B981' stroke-width='3'/%3E%3Ctext x='286' y='388' font-family='serif' font-size='300' fill='%23F6F2EA' text-anchor='middle'%3ER%3C/text%3E%3Cpath d='M352,254 Q357.76,284.24 388,290 Q357.76,295.76 352,326 Q346.24,295.76 316,290 Q346.24,284.24 352,254 Z' fill='%23D8B981'/%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Jura:wght@300;500&display=swap');
+
+  :root {
+    --green: #1E3B3A;
+    --deep-green: #16302F;
+    --gold: #BE9B5E;
+    --gold-light: #D8B981;
+    --ivory: #F6F2EA;
+    --cream: #FBF9F5;
+    --greige: #D8CFC0;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jura', sans-serif;
+    font-weight: 300;
+    background: var(--cream);
+    color: var(--green);
+    min-height: 100vh;
+    line-height: 1.4;
+  }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    background: var(--green);
+    color: var(--ivory);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .top-bar-left { display: flex; align-items: center; gap: 18px; }
+  .top-bar-logo { height: 44px; width: auto; }
+  .top-bar h1 { font-family: 'Italiana', serif; font-weight: 400; font-size: 1.3rem; letter-spacing: 1px; }
+  .top-bar .subtitle { font-size: .7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
+
+  .top-bar-right { display: flex; align-items: center; gap: 14px; }
+  .cost-badge {
+    border: 1px solid var(--gold-light);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: .85rem;
+    letter-spacing: 1px;
+    color: var(--gold-light);
+    white-space: nowrap;
+  }
+
+  /* ===== LAYOUT ===== */
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
+
+  section.card {
+    background: #fff;
+    border: 1px solid var(--greige);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .card-head {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: default;
+    border-bottom: 1px solid transparent;
+  }
+  .card-head.clickable { cursor: pointer; user-select: none; }
+  .card-head h2 {
+    font-family: 'Italiana', serif;
+    font-weight: 400;
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+  }
+  .card-head .chev { color: var(--gold); transition: transform .2s; }
+  .card.open .card-head { border-bottom-color: var(--greige); }
+  .card.open .chev { transform: rotate(90deg); }
+  .card-body { padding: 20px; display: none; }
+  .card.open .card-body, .card.static .card-body { display: block; }
+  .card.static .card-head { border-bottom-color: var(--greige); }
+
+  label.field-label {
+    display: block;
+    font-size: .72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 14px 0 6px;
+    font-weight: 500;
+  }
+  label.field-label:first-child { margin-top: 0; }
+
+  textarea, input[type="text"], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--greige);
+    border-radius: var(--radius);
+    font-family: 'Jura', sans-serif;
+    font-size: .9rem;
+    color: var(--green);
+    background: var(--cream);
+    outline: none;
+    transition: border-color .2s;
+  }
+  textarea:focus, input[type="text"]:focus, select:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 90px; }
+  #default-prompt { min-height: 170px; font-size: .82rem; line-height: 1.5; }
+
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 180px; }
+
+  button {
+    font-family: 'Jura', sans-serif;
+    font-weight: 500;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity .15s, background .15s;
+  }
+  button:hover { opacity: .88; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  .btn-gold {
+    background: var(--gold);
+    color: #fff;
+    padding: 14px 34px;
+    font-size: .95rem;
+    text-transform: uppercase;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 9px 18px;
+    font-size: .78rem;
+    text-transform: uppercase;
+  }
+  .btn-sm {
+    background: transparent;
+    border: 1px solid var(--greige);
+    color: var(--green);
+    padding: 6px 12px;
+    font-size: .72rem;
+  }
+
+  .save-toast { color: var(--gold); font-size: .8rem; margin-left: 12px; opacity: 0; transition: opacity .3s; }
+  .save-toast.show { opacity: 1; }
+
+  /* ===== BANNER ===== */
+  .banner {
+    background: var(--green);
+    color: var(--ivory);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .banner.show { display: block; }
+  .banner h3 { font-family: 'Italiana', serif; font-weight: 400; font-size: 1.1rem; margin-bottom: 8px; color: var(--gold-light); }
+  .banner p { font-size: .85rem; margin-bottom: 12px; }
+  .banner a { color: var(--gold-light); }
+  .banner .key-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .banner input {
+    flex: 1; min-width: 220px;
+    padding: 10px 12px;
+    border: 1px solid var(--gold-light);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,.08);
+    color: var(--ivory);
+    font-family: 'Jura', sans-serif;
+    outline: none;
+  }
+  .banner .error { color: #e5a0a0; font-size: .8rem; margin-top: 6px; min-height: 1em; }
+
+  /* ===== DROPZONE ===== */
+  .dropzone {
+    border: 2px dashed var(--greige);
+    border-radius: var(--radius);
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--gold);
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    margin-top: 14px;
+  }
+  .dropzone.dragover { border-color: var(--gold); background: var(--ivory); }
+  .dropzone p { font-size: .9rem; letter-spacing: 1px; }
+  .dropzone .hint { font-size: .72rem; color: var(--greige); margin-top: 6px; }
+
+  .thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .thumb {
+    width: 72px; height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--greige);
+    background: var(--ivory);
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb.err { border-color: #c0392b; }
+  .thumb .x {
+    position: absolute; top: 2px; right: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(30,59,58,.75);
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    padding: 0;
+  }
+
+  .start-row {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .file-count { font-size: .85rem; color: var(--gold); letter-spacing: 1px; }
+
+  /* ===== PROGRESS ===== */
+  #progress-card { display: none; }
+  #progress-card.show { display: block; }
+  .progress-track {
+    height: 8px;
+    background: var(--ivory);
+    border: 1px solid var(--greige);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width .4s;
+  }
+  .progress-stats { display: flex; justify-content: space-between; font-size: .85rem; margin-top: 8px; }
+
+  /* ===== RESULTS ===== */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .result-card {
+    background: #fff;
+    border: 1px solid var(--greige);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .compare {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    background: var(--ivory);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .compare img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .compare .tag {
+    position: absolute; bottom: 6px;
+    font-size: .6rem; letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(30,59,58,.7);
+    color: var(--ivory);
+    pointer-events: none;
+  }
+  .compare .tag.before { right: 6px; }
+  .compare .tag.after { left: 6px; }
+  .compare input[type="range"] {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    cursor: ew-resize;
+    margin: 0;
+  }
+  .result-meta { padding: 12px 14px; }
+  .result-name { font-size: .82rem; font-weight: 500; letter-spacing: .5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .result-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px; }
+  .status {
+    font-size: .68rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--greige);
+    color: var(--green);
+  }
+  .status.pending { color: #8a8a8a; }
+  .status.running { color: var(--gold); border-color: var(--gold); }
+  .status.done { color: #2e7d4f; border-color: #2e7d4f; }
+  .status.error { color: #c0392b; border-color: #c0392b; }
+  .result-cost { font-size: .75rem; color: var(--gold); }
+  .result-err { font-size: .74rem; color: #c0392b; margin-top: 6px; }
+  .result-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .result-actions a { text-decoration: none; }
+
+  .spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid var(--gold-light);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== LIGHTBOX ===== */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(22,48,47,.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 30px;
+  }
+  .lightbox.show { display: flex; }
+  .lightbox .compare {
+    width: min(90vw, 1400px);
+    max-height: 85vh;
+    aspect-ratio: auto;
+    cursor: default;
+  }
+  .lightbox .compare img { object-fit: contain; background: #000; }
+  .lightbox-close {
+    position: absolute; top: 16px; right: 24px;
+    background: none; color: var(--ivory);
+    font-size: 2rem;
+  }
+
+  footer.actions {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    display: flex;
+    gap: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .top-bar h1 { font-size: 1.05rem; }
+    .top-bar-logo { height: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <svg class="top-bar-logo" viewBox="0 0 1100 500" xmlns="http://www.w3.org/2000/svg">
+      <text x="550" y="280" font-family="Italiana, serif" font-size="150" fill="#F6F2EA" text-anchor="middle">CHARM</text>
+      <text x="550" y="378" font-family="Jura, sans-serif" font-size="57" letter-spacing="30" fill="#D8B981" text-anchor="middle">REALITY</text>
+    </svg>
+    <div>
+      <h1>Retuš fotek</h1>
+      <div class="subtitle">Dávková AI úprava</div>
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <span class="cost-badge" id="cost-badge">Celkem: $0.00</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- API KEY BANNER -->
+  <div class="banner" id="key-banner">
+    <h3>Chybí API klíč</h3>
+    <p>
+      Aplikace potřebuje klíč z <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>
+      (nejdřív si tam v sekci Credits nabijte kredit, např. $10).
+      Klíč se uloží jen do lokálního souboru <code>.env</code> na tomto počítači.
+    </p>
+    <div class="key-row">
+      <input type="password" id="key-input" placeholder="sk-or-v1-..." autocomplete="off">
+      <button class="btn-gold" id="key-save" style="padding:10px 24px;font-size:.8rem;">Uložit klíč</button>
+    </div>
+    <div class="error" id="key-error"></div>
+  </div>
+
+  <!-- NASTAVENÍ -->
+  <section class="card" id="settings-card">
+    <div class="card-head clickable" id="settings-toggle">
+      <h2>Nastavení</h2>
+      <span class="chev">›</span>
+    </div>
+    <div class="card-body">
+      <label class="field-label" for="default-prompt">Výchozí prompt (základ pro každou fotku)</label>
+      <textarea id="default-prompt" spellcheck="false"></textarea>
+      <div style="display:flex;align-items:center;margin-top:10px;">
+        <button class="btn-outline" id="save-prompt">Uložit výchozí prompt</button>
+        <span class="save-toast" id="prompt-toast">Uloženo!</span>
+      </div>
+      <div class="row" style="margin-top:16px;">
+        <div>
+          <label class="field-label" for="model-select">Model</label>
+          <select id="model-select"></select>
+        </div>
+        <div>
+          <label class="field-label" for="resolution-select">Rozlišení výstupu</label>
+          <select id="resolution-select">
+            <option value="1K">1K — nejlevnější</option>
+            <option value="2K" selected>2K — doporučeno</option>
+            <option value="4K">4K — nejdražší</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="concurrency-select">Souběžně zpracovávat</label>
+          <select id="concurrency-select">
+            <option value="1">1 fotku</option>
+            <option value="2" selected>2 fotky</option>
+            <option value="3">3 fotky</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DÁVKA -->
+  <section class="card static">
+    <div class="card-head"><h2>Dávka</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div>
+          <label class="field-label" for="batch-name">Název dávky (= složka s výsledky)</label>
+          <input type="text" id="batch-name" spellcheck="false">
+        </div>
+      </div>
+      <label class="field-label" for="refine-prompt">Doplňující pokyny pro tuto dávku (nepovinné)</label>
+      <textarea id="refine-prompt" placeholder="Např.: Na fotkách je lešení u vchodu — nech ho beze změny. Obloha je mírně přepálená, jemně ji ztmav."></textarea>
+
+      <div class="dropzone" id="dropzone">
+        <p>Přetáhněte sem fotky, nebo klikněte pro výběr</p>
+        <p class="hint">JPEG/PNG · klidně desítky najednou · HEIC funguje jen v Safari</p>
+        <input type="file" id="file-input" multiple accept="image/*" hidden>
+      </div>
+      <div class="thumbs" id="thumbs"></div>
+
+      <div class="start-row">
+        <button class="btn-gold" id="start-btn" disabled>Spustit retuš</button>
+        <span class="file-count" id="file-count"></span>
+        <button class="btn-sm" id="clear-btn" style="display:none;">Vymazat výběr</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRŮBĚH -->
+  <section class="card static" id="progress-card">
+    <div class="card-head"><h2>Průběh</h2></div>
+    <div class="card-body">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-stats">
+        <span id="progress-text">Hotovo 0 / 0</span>
+        <span id="progress-cost"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- VÝSLEDKY -->
+  <div class="results-grid" id="results"></div>
+
+</div>
+
+<footer class="actions">
+  <button class="btn-outline" id="open-folder">Otevřít výstupní složku</button>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close">&times;</button>
+  <div class="compare" id="lightbox-compare"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

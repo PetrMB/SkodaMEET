@@ -1,0 +1,11 @@
+.env
+config.json
+output/
+*.jpg
+*.jpeg
+*.JPG
+*.JPEG
+*.png
+*.PNG
+*.heic
+*.HEIC
